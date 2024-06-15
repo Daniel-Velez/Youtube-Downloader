@@ -369,8 +369,8 @@ class YouTubeDownloader(QMainWindow):
     def check_for_updates(self):
         try:
             response = requests.get('https://github.com/Daniel-Velez/Youtube-Downloader/main/version.txt')
-            CURRENT_VERSION = response.text.strip()
-            if CURRENT_VERSION != CURRENT_VERSION:
+            last_version = response.text.strip()
+            if last_version != CURRENT_VERSION:
                 self.prompt_update(CURRENT_VERSION)
         except Exception as e:
             print(f"Error al verificar actualizaciones: {e}")
