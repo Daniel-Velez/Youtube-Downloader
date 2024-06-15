@@ -369,15 +369,15 @@ class YouTubeDownloader(QMainWindow):
     def check_for_updates(self):
         try:
             response = requests.get('https://github.com/Daniel-Velez/Youtube-Downloader/main/version.txt')
-            latest_version = response.text.strip()
-            if latest_version != CURRENT_VERSION:
-                self.prompt_update(latest_version)
+            CURRENT_VERSION = response.text.strip()
+            if CURRENT_VERSION != CURRENT_VERSION:
+                self.prompt_update(CURRENT_VERSION)
         except Exception as e:
             print(f"Error al verificar actualizaciones: {e}")
 
-    def prompt_update(self, latest_version):
+    def prompt_update(self, CURRENT_VERSION):
         reply = QMessageBox.question(self, 'Actualización Disponible',
-                                     f'Hay una nueva versión disponible: {latest_version}. ¿Quieres actualizar?',
+                                     f'Hay una nueva versión disponible: {CURRENT_VERSION}. ¿Quieres actualizar?',
                                      QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             self.update_application()
