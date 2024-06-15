@@ -25,7 +25,7 @@ else:
     default_download_folder = os.path.join(os.environ['HOME'], 'Downloads')
 
 # Versión actual de la aplicación
-CURRENT_VERSION = "1.0.0"
+CURRENT_VERSION = "1.0.1"
 
 class YouTubeDownloader(QMainWindow):
     def __init__(self):
@@ -368,7 +368,7 @@ class YouTubeDownloader(QMainWindow):
 
     def check_for_updates(self):
         try:
-            response = requests.get('https://github.com/Daniel-Velez/Youtube-Downloader/blob/main/version.txt')
+            response = requests.get('https://github.com/Daniel-Velez/Youtube-Downloader/main/version.txt')
             latest_version = response.text.strip()
             if latest_version != CURRENT_VERSION:
                 self.prompt_update(latest_version)
