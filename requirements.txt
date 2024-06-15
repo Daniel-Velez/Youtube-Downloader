@@ -1,0 +1,6 @@
+environ == 1.0
+requests == 2.32.3
+pytube == 15.0.0
+PyQt5 == 5.15.10
+google-api-python-client == 2.133.0
+python-dotenv == 1.0.1
