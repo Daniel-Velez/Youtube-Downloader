@@ -1,7 +1,6 @@
 import os
 import re
 import sys
-import environ
 import requests
 import zipfile
 import os
