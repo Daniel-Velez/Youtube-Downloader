@@ -384,7 +384,7 @@ class YouTubeDownloader(QMainWindow):
 
     def update_application(self):
         try:
-            response = requests.get('https://github.com/Daniel-Velez/Youtube-Donwloader.git')
+            response = requests.get('https://github.com/Daniel-Velez/Youtube-Downloader.git')
             with open('update.zip', 'wb') as f:
                 f.write(response.content)
             # Aquí puedes agregar código para descomprimir y reemplazar los archivos antiguos con los nuevos
