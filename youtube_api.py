@@ -3,6 +3,9 @@ import re
 import sys
 import environ
 import requests
+import zipfile
+import os
+import shutil
 from dotenv import load_dotenv
 from pytube import YouTube
 from googleapiclient.discovery import build
@@ -383,14 +386,47 @@ class YouTubeDownloader(QMainWindow):
             self.update_application()
 
     def update_application(self):
+        temp_dir = 'update_temp'
+        
         try:
-            response = requests.get('https://github.com/Daniel-Velez/Youtube-Downloader.git')
+            # Descargar el archivo zip del repositorio
+            response = requests.get('https://github.com/Daniel-Velez/Youtube-Downloader/archive/refs/heads/main.zip')
+            response.raise_for_status()  # Manejar errores HTTP
+            
+            # Guardar el archivo zip en disco
             with open('update.zip', 'wb') as f:
                 f.write(response.content)
-            # Aquí puedes agregar código para descomprimir y reemplazar los archivos antiguos con los nuevos
+            
+            # Crear un directorio temporal para la actualización
+            os.makedirs(temp_dir, exist_ok=True)
+            
+            # Descomprimir el archivo zip
+            with zipfile.ZipFile('update.zip', 'r') as zip_ref:
+                zip_ref.extractall(temp_dir)
+            
+            # Ruta del contenido descomprimido
+            extracted_dir = os.path.join(temp_dir, 'Youtube-Downloader-main')
+
+            # Mover archivos descomprimidos a la ubicación correcta
+            for root, dirs, files in os.walk(extracted_dir):
+                for file in files:
+                    if file == '.gitignore':
+                        continue  # Ignorar el archivo .gitignore
+                    src_file = os.path.join(root, file)
+                    dst_file = os.path.join('.', os.path.relpath(src_file, extracted_dir))
+                    os.makedirs(os.path.dirname(dst_file), exist_ok=True)
+                    shutil.move(src_file, dst_file)
+
+            # Eliminar el archivo zip descargado
+            os.remove('update.zip')
+            
             QMessageBox.information(self, 'Actualización', 'La aplicación se ha actualizado. Reinicia la aplicación.')
         except Exception as e:
             QMessageBox.critical(self, 'Error', f'Error al actualizar la aplicación: {e}')
+        finally:
+            # Eliminar la carpeta temporal
+            if os.path.exists(temp_dir):
+                shutil.rmtree(temp_dir)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
