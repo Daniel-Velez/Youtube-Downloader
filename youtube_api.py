@@ -60,7 +60,7 @@ class YouTubeDownloader(QMainWindow):
             print(f"El icono no se encontró en la ruta: {icon_path}")
 
         # Verificación de la imagen de fondo
-        background_image_path = resource_path('Fondo.png')
+        background_image_path = resource_path('C:/Users/User/Desktop/Deberes/Programacion_Daniel/Youtube Downloader/Fondo.png')
         if os.path.exists(background_image_path):
             try:
                 pixmap = QPixmap(background_image_path)
