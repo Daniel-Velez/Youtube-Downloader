@@ -4,14 +4,16 @@ import sys
 import requests
 import zipfile
 import shutil
+from pathlib import Path
 from dotenv import load_dotenv 
 from pytube import YouTube
 from googleapiclient.discovery import build
-from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QPixmap, QIcon
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, 
+from PySide6.QtCore import Qt, QTimer
+from PySide6.QtGui import QPixmap, QIcon
+from PySide6.QtWidgets import (QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, 
                              QVBoxLayout, QWidget, QFileDialog, QMessageBox, QListWidget, 
                              QListWidgetItem, QHBoxLayout, QSizePolicy)
+
 
 
 
@@ -34,11 +36,11 @@ def resource_path(relative_path):
     """ Get the absolute path to the resource, works for dev and for PyInstaller """
     try:
         # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
+        base_path = Path(sys._MEIPASS)
     except Exception:
-        base_path = os.path.abspath(".")
+        base_path = Path('.').absolute()
 
-    return os.path.join(base_path, relative_path)
+    return (base_path / relative_path).as_posix()
 
 class YouTubeDownloader(QMainWindow):
     def __init__(self):
@@ -60,7 +62,7 @@ class YouTubeDownloader(QMainWindow):
             print(f"El icono no se encontró en la ruta: {icon_path}")
 
         # Verificación de la imagen de fondo
-        background_image_path = resource_path('C:/Users/User/Desktop/Deberes/Programacion_Daniel/Youtube Downloader/Fondo.png')
+        background_image_path = resource_path('Fondo.png')  # Uso de cadena raw
         if os.path.exists(background_image_path):
             try:
                 pixmap = QPixmap(background_image_path)
@@ -92,9 +94,12 @@ class YouTubeDownloader(QMainWindow):
                             padding: 5px;
                         }}
                     """)
-            except:
-                print("Nada")
-
+                else:
+                    print(f"No se pudo crear el pixmap desde: {background_image_path}")
+            except Exception as e:
+                print(f"Error al cargar el pixmap: {e}")
+        else:
+            print(f"La imagen de fondo no se encontró en la ruta: {background_image_path}")
             
         # Crear widgets
         self.url_label = QLabel('URL del video o búsqueda:', self)
@@ -445,4 +450,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = YouTubeDownloader()
     ex.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
