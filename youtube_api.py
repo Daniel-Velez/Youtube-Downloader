@@ -3,21 +3,22 @@ import re
 import sys
 import requests
 import zipfile
-import os
 import shutil
-from dotenv import load_dotenv
+from dotenv import load_dotenv 
 from pytube import YouTube
 from googleapiclient.discovery import build
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, 
-                             QVBoxLayout, QWidget, QFileDialog, QMessageBox, QListWidget, QListWidgetItem, QHBoxLayout, QSizePolicy)
+                             QVBoxLayout, QWidget, QFileDialog, QMessageBox, QListWidget, 
+                             QListWidgetItem, QHBoxLayout, QSizePolicy)
+
 
 
 load_dotenv()
 
-YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
-
+# Leer la clave de la API de YouTube desde las variables de entorno
+YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY')
 # Obtener la ruta de la carpeta de descargas predeterminada
 if sys.platform == 'win32':
     default_download_folder = os.path.join(os.environ['USERPROFILE'], 'Downloads')
@@ -28,6 +29,16 @@ else:
 
 # Versión actual de la aplicación
 CURRENT_VERSION = "1.0.1"
+
+def resource_path(relative_path):
+    """ Get the absolute path to the resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 class YouTubeDownloader(QMainWindow):
     def __init__(self):
@@ -42,46 +53,54 @@ class YouTubeDownloader(QMainWindow):
         self.setFixedSize(450, 600)
 
         # Verificación del icono
-        icon_path = 'icono.jpeg'
+        icon_path = resource_path('icono.jpeg')
         if os.path.exists(icon_path):
             self.setWindowIcon(QIcon(icon_path))
         else:
             print(f"El icono no se encontró en la ruta: {icon_path}")
 
         # Verificación de la imagen de fondo
-        background_image_path = "Fondo.jpg"
+        background_image_path = resource_path('C:/Users/User/Desktop/Deberes/Programacion_Daniel/Youtube Downloader/Fondo.png')
+        print(f"Resolved background image path: {background_image_path}")  # Línea de depuración
+        
         if os.path.exists(background_image_path):
-            self.setStyleSheet(f"""
-                QMainWindow {{
-                    background-image: url('{background_image_path}');
-                    background-repeat: no-repeat;
-                    background-position: center;
-                    font-family: Arial;
-                    font-size: 14px;
-                }}
-                QLabel {{
-                    color: black;
-                    font-size: 16px;
-                }}
-                QPushButton {{
-                    background-color: #00FFCD;
-                    color: black;
-                    font-size: 14px;
-                    border-radius: 5px;
-                    padding: 10px;
-                }}
-                QPushButton:pressed {{
-                    background-color:  #A3FFED;  /* Color cuando se presiona */
-                    QTimer.singleShot(200, lambda: QPushButton.setStyleSheet())
-                }}
-                QLineEdit {{
-                    font-size: 14px;
-                    padding: 5px;
-                }}
-            """)
+            try:
+                pixmap = QPixmap(background_image_path)
+                if not pixmap.isNull():
+                    self.setStyleSheet(f"""
+                        QMainWindow {{
+                            background-image: url('{background_image_path}');
+                            background-position: center;
+                            font-family: Arial;
+                            font-size: 14px;
+                        }}
+                        QLabel {{
+                            color: black;
+                            font-size: 16px;
+                        }}
+                        QPushButton {{
+                            background-color: #00FFCD;
+                            color: black;
+                            font-size: 14px;
+                            border-radius: 5px;
+                            padding: 10px;
+                        }}
+                        QPushButton:pressed {{
+                            background-color:  #A3FFED;  /* Color cuando se presiona */
+                            QTimer.singleShot(200, lambda: QPushButton.setStyleSheet())
+                        }}
+                        QLineEdit {{
+                            font-size: 14px;
+                            padding: 5px;
+                        }}
+                    """)
+                else:
+                    print(f"No se pudo crear el QPixmap desde: {background_image_path}")
+            except Exception as e:
+                print(f"Error al cargar la imagen de fondo: {e}")
         else:
             print(f"La imagen de fondo no se encontró en la ruta: {background_image_path}")
-
+            
         # Crear widgets
         self.url_label = QLabel('URL del video o búsqueda:', self)
         self.url_entry = QLineEdit(self)
